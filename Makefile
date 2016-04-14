@@ -18,6 +18,7 @@ $(LIB): guid.o
 	$(CXX) $(LIBS) $(LDFLAGS) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
 
 test: $(OBJ)
+	$(CXX) $(LIBS) $(LDFLAGS) $^ -o $@
 
 install: guid.h $(LIB)
 	install -dm 0755 $(DESTDIR)$(INCLUDEDIR)

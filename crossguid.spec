@@ -1,3 +1,7 @@
+#
+# Conditional build:
+%bcond_without	tests		# build without tests
+
 %define rel 1
 %define short_commit 8f399e8
 %define commit_date 20150803
@@ -42,7 +46,7 @@ cp -p %{SOURCE1} Makefile
 	CXXFLAGS="%{rpmcxxflags}"
 
 %if %{with tests}
-%{__make} \
+%{__make} test \
 	CXX="%{__cxx}" \
 	LDFLAGS="%{rpmldflags}" \
 	CXXFLAGS="%{rpmcxxflags}"
