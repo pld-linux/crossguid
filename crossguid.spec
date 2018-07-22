@@ -1,21 +1,22 @@
+# TODO
+# - missing SONAME
+# - missing make install from cmake
 #
 # Conditional build:
 %bcond_without	tests		# build without tests
 
-%define rel 1
-%define short_commit 8f399e8
-%define commit_date 20150803
 Summary:	Lightweight cross platform C++ GUID/UUID library
 Name:		crossguid
-Version:	0
-Release:	0.%{rel}.%{commit_date}
+Version:	0.2.2
+# if you rel 1, be ready to port kodi
+Release:	0.1
 License:	MIT
 Group:		Libraries
-Source0:	https://github.com/graeme-hill/crossguid/archive/%{short_commit}/%{name}-%{short_commit}.tar.gz
-# Source0-md5:	696a6573286d6fdbfde18686aa9f6489
+Source0:	https://github.com/graeme-hill/crossguid/archive/v%{version}/%{name}-%{version}.tar.gz
+# Source0-md5:	9fe9554b0dbe2ffe590f759b7e3287cb
 URL:		https://github.com/graeme-hill/crossguid/
-Source1:	Makefile
 BuildRequires:	libstdc++-devel
+BuildRequires:	cmake
 BuildRequires:	libuuid-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -34,31 +35,26 @@ The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
 %prep
-%setup -qc
-mv %{name}-*/* .
-
-cp -p %{SOURCE1} Makefile
+%setup -q
 
 %build
-%{__make} \
-	CXX="%{__cxx}" \
-	LDFLAGS="%{rpmldflags}" \
-	CXXFLAGS="%{rpmcxxflags}"
+install -d build
+cd build
+%cmake \
+	-DXG_TESTS=%{!?with_tests:ON}%{?with_tests:OFF} \
+	..
+%{__make}
 
 %if %{with tests}
-%{__make} test \
-	CXX="%{__cxx}" \
-	LDFLAGS="%{rpmldflags}" \
-	CXXFLAGS="%{rpmcxxflags}"
-./test
+./xgtest
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} install \
-	LIBDIR=%{_libdir} \
-	INCLUDEDIR=%{_includedir} \
-	DESTDIR=$RPM_BUILD_ROOT
+# no install target in cmake, install manually
+install -d $RPM_BUILD_ROOT{%{_includedir},%{_libdir}}
+cp -p Guid.hpp $RPM_BUILD_ROOT%{_includedir}
+install -p build/libxg.so $RPM_BUILD_ROOT%{_libdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -69,10 +65,8 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README.md LICENSE
-%attr(755,root,root) %{_libdir}/libcrossguid.so.*.*.*
-%ghost %{_libdir}/libcrossguid.so.0
+%attr(755,root,root) %{_libdir}/libxg.so
 
 %files devel
 %defattr(644,root,root,755)
-%{_includedir}/guid.h
-%{_libdir}/libcrossguid.so
+%{_includedir}/Guid.hpp
