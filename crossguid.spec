@@ -7,6 +7,7 @@
 %define commit_date 20150803
 Summary:	Lightweight cross platform C++ GUID/UUID library
 Name:		crossguid
+# 0.2.2 is being prepated on "dev-0.2" branch
 Version:	0
 Release:	0.%{rel}.%{commit_date}
 License:	MIT
