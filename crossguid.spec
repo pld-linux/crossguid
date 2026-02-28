@@ -2,7 +2,7 @@
 # Conditional build:
 %bcond_without	tests		# build without tests
 
-%define rel 1
+%define rel 2
 %define short_commit 8f399e8
 %define commit_date 20150803
 Summary:	Lightweight cross platform C++ GUID/UUID library
